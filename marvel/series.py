@@ -8,12 +8,20 @@ from .core import MarvelObject, DataWrapper, DataContainer, Summary, List
 class SeriesDataWrapper(DataWrapper):
     @property
     def data(self):
-        return SeriesDataContainer(self.marvel, self.dict['data'])
+        try:
+            return SeriesDataContainer(self.marvel, self.dict['data'])
+        except:
+            print self.dict
 
 class SeriesDataContainer(DataContainer):
     @property
     def results(self):
-        return self.list_to_instance_list(self.dict['results'], Series)
+        try:
+            # TODO: If there was an API error this just fails with a vague error
+            return self.list_to_instance_list(self.dict['results'], Series)
+        except:
+            print self.dict
+
 
 class Series(MarvelObject):
     """
@@ -133,8 +141,8 @@ class Series(MarvelObject):
 
         :returns:  ComicDataWrapper -- A new request to API. Contains full results set.
         """
-        from .comic import Comic, ComicDataWrapper        
-        return self.get_related_resource(Comic, ComicDataWrapper, args, kwargs)
+        from .comic import Comic, ComicDataWrapper
+        return self.get_related_resource(Comic, ComicDataWrapper, *args, **kwargs)
 
     def get_events(self, *args, **kwargs):
         """
